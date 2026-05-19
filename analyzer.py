@@ -50,10 +50,10 @@ df['Buffed_Tackling'] = df['Tackling'] * (1.0 + (df['Long Reach Tackle'] * 0.10)
 # Calculate the Average Tracking Speed and Positioning of defenders with unique models
 def calculate_shutdown(row):
   if row['Model'] == 'Build Up':
-    score = ((row['Buffed_Tackling'] * 0.20) + 
+    score = ((row['Buffed_Tackling'] * 0.25) + 
              (row['Buffed_Def_Aware'] * 0.35) + 
              (row['Buffed_Def_Eng'] * 0.25) + 
-             (row['Buffed_Speed'] * 0.15) +
+             (row['Buffed_Speed'] * 0.10) +
              (row['Buffed_Acceleration'] * 0.05)
              )
     
