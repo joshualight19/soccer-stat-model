@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS  # Import the security pass tool
 import pandas as pd
 
@@ -11,8 +11,9 @@ def get_defenders():
     # 1. Grab the raw spreadsheet
     df = pd.read_csv('defenders_data(Sheet1).csv')
 
-    match_minute = 75
-    goal_difference = 1
+# Grab the parameters from the URL. If they aren't there, default to 0.
+    match_minute = int(request.args.get('minute', 0))
+    goal_difference = int(request.args.get('goal_diff', 0))
 
     if match_minute > 45 and goal_difference > 0:
       fortress_active_buff = 0.05
