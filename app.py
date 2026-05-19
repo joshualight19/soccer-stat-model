@@ -1,9 +1,10 @@
 from flask import Flask, jsonify
+from flask_cors import CORS  # Import the security pass tool
 import pandas as pd
 
 app = Flask(__name__)
-
 app.json.sort_keys = False
+CORS(app)  # Turn on the security pass for the whole app!
 
 @app.route('/api/defenders', methods=['GET'])
 def get_defenders():
