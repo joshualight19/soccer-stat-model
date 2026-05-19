@@ -6,21 +6,12 @@ app = Flask(__name__)
 app.json.sort_keys = False
 CORS(app)  # Turn on the security pass for the whole app!
 
-@app.route('/api/defenders', methods=['GET'])
-def get_defenders():
-    # 1. Grab the raw spreadsheet
-    df = pd.read_csv('defenders_data(Sheet1).csv')
-
-# Grab the parameters from the URL. If they aren't there, default to 0.
-    match_minute = int(request.args.get('minute', 0))
-    goal_difference = int(request.args.get('goal_diff', 0))
-
+def calculate_catenaccio_scores(df,match_minute,goal_difference):
     if match_minute > 45 and goal_difference > 0:
       fortress_active_buff = 0.05
     else:
       fortress_active_buff = 0.00
       
-
     # Force Python to read BOTH skills and base stats as actual numbers instead of text.
     cols_to_clean = [
         'Aerial Forte', 'Shadow Hunt', 'Fortress', 'Long Reach Tackle',
@@ -118,41 +109,46 @@ def get_defenders():
     df = df.reset_index(drop=True)
     df.index = df.index + 1
 
-
-    # print("___ TOP DEFENDERS STATS___")
-    # print(df[['Name', 'Shutdown_Score', 'Defending_Score', 'Overall_Score']])
+    return df
 
 
+@app.route('/api/defenders', methods=['GET'])
+def get_defenders():
+    # 1. Grab the raw spreadsheet
+    df = pd.read_csv('defenders_data(Sheet1).csv')
 
+    # Grab the parameters from the URL. If they aren't there, default to 0.
+    match_minute = int(request.args.get('minute', 0))
+    goal_difference = int(request.args.get('goal_diff', 0))
+
+
+    # 2. Send it to the prep station!
+    df = calculate_catenaccio_scores(df, match_minute, goal_difference)
     
-    # 2. Chop the spreadsheet into individual plates
-    defenders_list = df.to_dict(orient='records')
+    # 3. Sort by overall score for the leaderboard
+    df = df.sort_values(by='Overall_Score', ascending=False)
     
-    # 3. Hand the plates out the window
-    return jsonify(defenders_list)
+    return jsonify(df.to_dict(orient='records'))
+    
 
 @app.route('/api/compare', methods=['GET'])
 def compare_defenders():
-    # 1. Grab the raw spreadsheet
     df = pd.read_csv('defenders_data(Sheet1).csv')
-    df.columns = df.columns.str.strip()
+    df['Name'] = df['Name'].str.strip()
     
-    # 2. Ask the web browser: "Which two players do you want to look at?"
-    player1_name = request.args.get('p1')
-    player2_name = request.args.get('p2')
-
-    df['Name'] = df['Name'].str.strip()  # <-- ADD THIS LINE HERE
+    # 1. Get the match state AND the two player names from the URL
+    minute = int(request.args.get('minute', 0))
+    diff = int(request.args.get('goal_diff', 0))
+    p1 = request.args.get('p1')
+    p2 = request.args.get('p2')
     
-    # 3. Use Pandas to filter the spreadsheet and pull out ONLY those two names
-    # This says: Find rows where the 'Name' matches player1 OR player2
-    compared_df = df[df['Name'].isin([player1_name, player2_name])]
+    # 2. Send it to the exact same prep station!
+    df = calculate_catenaccio_scores(df, minute, diff)
     
-    # 4. Convert just those two rows into our clean JSON plate
-    result = compared_df.to_dict(orient='records')
+    # 3. Filter down to ONLY those two calculated players
+    compared_df = df[df['Name'].isin([p1, p2])]
     
-    # 5. Hand it out the window
-    return jsonify(result)
-
+    return jsonify(compared_df.to_dict(orient='records'))
 
 if __name__ == '__main__':
     app.run(debug=True)
