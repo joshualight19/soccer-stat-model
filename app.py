@@ -131,5 +131,28 @@ def get_defenders():
     # 3. Hand the plates out the window
     return jsonify(defenders_list)
 
+@app.route('/api/compare', methods=['GET'])
+def compare_defenders():
+    # 1. Grab the raw spreadsheet
+    df = pd.read_csv('defenders_data(Sheet1).csv')
+    df.columns = df.columns.str.strip()
+    
+    # 2. Ask the web browser: "Which two players do you want to look at?"
+    player1_name = request.args.get('p1')
+    player2_name = request.args.get('p2')
+
+    df['Name'] = df['Name'].str.strip()  # <-- ADD THIS LINE HERE
+    
+    # 3. Use Pandas to filter the spreadsheet and pull out ONLY those two names
+    # This says: Find rows where the 'Name' matches player1 OR player2
+    compared_df = df[df['Name'].isin([player1_name, player2_name])]
+    
+    # 4. Convert just those two rows into our clean JSON plate
+    result = compared_df.to_dict(orient='records')
+    
+    # 5. Hand it out the window
+    return jsonify(result)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
