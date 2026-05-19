@@ -148,7 +148,19 @@ def compare_defenders():
     # 3. Filter down to ONLY those two calculated players
     compared_df = df[df['Name'].isin([p1, p2])]
     
-    return jsonify(compared_df.to_dict(orient='records'))
+    # ... (Your code above stays the same: loading, prep station, filtering) ...
+
+    # Convert the filtered rows into a list of records
+    players_found = compared_df.to_dict(orient='records')
+    
+    # Let's organize the plate explicitly: Player 1 on top, Player 2 under it
+    structured_result = {
+        "player_1": players_found[0] if len(players_found) > 0 else None,
+        "player_2": players_found[1] if len(players_found) > 1 else None
+    }
+    
+    # Hand the structured package out the window
+    return jsonify(structured_result)
 
 if __name__ == '__main__':
     app.run(debug=True)
