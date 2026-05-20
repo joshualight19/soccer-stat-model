@@ -40,26 +40,26 @@ def calculate_catenaccio_scores(df,match_minute,goal_difference):
     def calculate_shutdown(row):
       if row['Model'] == 'Build Up':
         score = ((row['Buffed_Tackling'] * 0.25) + 
-                (row['Buffed_Def_Aware'] * 0.35) + 
-                (row['Buffed_Def_Eng'] * 0.25) + 
-                (row['Buffed_Speed'] * 0.10) +
+                (row['Buffed_Def_Aware'] * 0.30) + 
+                (row['Buffed_Def_Eng'] * 0.20) + 
+                (row['Buffed_Speed'] * 0.20) +
                 (row['Buffed_Acceleration'] * 0.05)
                 )
         
       elif row['Model'] == 'Destroyer':
         score = ((row['Buffed_Tackling'] * 0.20) + 
-                (row['Buffed_Def_Aware'] * 0.35) + 
+                (row['Buffed_Def_Aware'] * 0.30) + 
                 (row['Buffed_Def_Eng'] * 0.20) + 
-                (row['Buffed_Speed'] * 0.15) +
+                (row['Buffed_Speed'] * 0.20) +
                 (row['Buffed_Acceleration'] * 0.10)
                 )
       
       else:
         score = ((row['Buffed_Tackling'] * 0.20) + 
                 (row['Buffed_Def_Aware'] * 0.30) + 
-                (row['Buffed_Def_Eng'] * 0.30) + 
-                (row['Buffed_Speed'] * 0.10) +
-                (row['Buffed_Acceleration'] * 0.05)
+                (row['Buffed_Def_Eng'] * 0.20) + 
+                (row['Buffed_Speed'] * 0.20) +
+                (row['Buffed_Acceleration'] * 0.10)
                 )
 
       return score
@@ -75,12 +75,12 @@ def calculate_catenaccio_scores(df,match_minute,goal_difference):
       (df['Buffed_Tackling'] * 0.10) +
       (df['Buffed_Def_Aware'] * 0.15) +
       (df['Physical Contact'] * 0.15) +
-      (df['Buffed_Aggression'] * 0.15) +
-      # (df['Buffed_Speed'] * 0.10) +
+      (df['Buffed_Aggression'] * 0.10) +
+      (df['Buffed_Speed'] * 0.10) +
       (df['Buffed_Acceleration'] * 0.10) +
       (df['Buffed_Balance'] * 0.05) +
-      (df['Buffed_Jumping'] * 0.05) +
-      (df['Nomalized_Height'] * 0.25)
+      (df['Buffed_Jumping'] * 0.10) +
+      (df['Nomalized_Height'] * 0.15)
     )
 
 
