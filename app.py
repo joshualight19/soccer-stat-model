@@ -47,9 +47,9 @@ def calculate_catenaccio_scores(df,match_minute,goal_difference):
                 )
         
       elif row['Model'] == 'Destroyer':
-        score = ((row['Buffed_Tackling'] * 0.25) + 
-                (row['Buffed_Def_Aware'] * 0.30) + 
-                (row['Buffed_Def_Eng'] * 0.20) + 
+        score = ((row['Buffed_Tackling'] * 0.30) + 
+                (row['Buffed_Def_Aware'] * 0.35) + 
+                (row['Buffed_Def_Eng'] * 0.10) + 
                 (row['Buffed_Speed'] * 0.20) +
                 (row['Buffed_Acceleration'] * 0.05)
                 )
@@ -73,14 +73,14 @@ def calculate_catenaccio_scores(df,match_minute,goal_difference):
     # Defending Score Calculation
     df['Defending_Score'] = (
       (df['Buffed_Tackling'] * 0.15) +
-      (df['Buffed_Def_Aware'] * 0.15) +
-      (df['Physical Contact'] * 0.15) +
-      (df['Buffed_Aggression'] * 0.05) +
-      (df['Buffed_Speed'] * 0.10) +
-      (df['Buffed_Acceleration'] * 0.10) +
-      (df['Buffed_Balance'] * 0.05) +
-      (df['Buffed_Jumping'] * 0.10) +
-      (df['Nomalized_Height'] * 0.15)
+      (df['Buffed_Def_Aware'] * 0.10) +
+      (df['Physical Contact'] * 0.20) +
+      (df['Buffed_Aggression'] * 0.10) +
+      (df['Buffed_Speed'] * 0.05) +
+      (df['Buffed_Acceleration'] * 0.15) +
+      #(df['Buffed_Balance'] * 0.05) +
+      (df['Buffed_Jumping'] * 0.05) +
+      (df['Nomalized_Height'] * 0.20)
     )
 
 
