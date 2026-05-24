@@ -72,6 +72,11 @@ def calculate_catenaccio_scores(df,match_minute,goal_difference):
 
     # Defending Score Calculation
     df['Defending_Score'] = (
+       
+
+
+
+       
       (df['Buffed_Tackling'] * 0.15) +
       (df['Buffed_Def_Aware'] * 0.10) +
       (df['Physical Contact'] * 0.20) +
