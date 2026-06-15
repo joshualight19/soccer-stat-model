@@ -18,6 +18,10 @@ raw_df = load_data()
 
 # 4. Build the Sidebar Controls
 st.sidebar.header("⚙️ Match State Settings")
+
+# NEW: Add the position selector
+selected_position = st.sidebar.selectbox("Select Position", ['CB', 'FB'])
+
 match_minute = st.sidebar.slider("Match Minute", min_value=0, max_value=90, value=0)
 goal_difference = st.sidebar.number_input("Goal Difference", min_value=-5, max_value=5, value=0)
 st.sidebar.caption("Adjust these to see 'Fortress' and other conditional skills activate.")
@@ -113,8 +117,11 @@ def calculate_catenaccio_scores(df, match_minute, goal_difference):
     return df
 
 # 6. Run the math using the sidebar inputs
-calculated_df = calculate_catenaccio_scores(raw_df.copy(), match_minute, goal_difference)
+# NEW: Filter the dataframe BEFORE we run the math
+filtered_df = raw_df[raw_df['Position'] == selected_position]
 
+# NEW: Pass the 'filtered_df' into your engine instead of the raw_df
+calculated_df = calculate_catenaccio_scores(filtered_df.copy(), match_minute, goal_difference)
 # 7. Display the final ranked leaderboard on the screen
 st.dataframe(calculated_df)
 
