@@ -5,9 +5,28 @@ import plotly.graph_objects as go
 # 1. Set up the web page settings
 st.set_page_config(page_title="The Catenaccio Engine", layout="wide")
 
+# 4. Build the Sidebar Controls
+st.sidebar.header("⚙️ Match State Settings")
+
+# NEW: Added the position selector
+selected_position = st.sidebar.selectbox("Select Position", ['CB', 'FB'])
+
+match_minute = st.sidebar.slider("Match Minute", min_value=0, max_value=90, value=0)
+goal_difference = st.sidebar.number_input("Goal Difference", min_value=-5, max_value=5, value=0)
+st.sidebar.caption("Adjust these to see 'Fortress' and other conditional skills activate.")
+
+
 # 2. Add the UI Headers
 st.title("🛡️ The Catenaccio Engine")
-st.subheader("Center-Back True Rating Leaderboard")
+
+# This creates a row of highlight badges for your app metrics
+top_col1, top_col2, top_col3 = st.columns(3)
+with top_col1:
+    st.metric(label="Analysis Mode", value=f"{selected_position} Engine")
+with top_col2:
+    st.metric(label="Current Match Minute", value=f"{match_minute}'")
+with top_col3:
+    st.metric(label="Goal Shift", value=f"{goal_difference}")
 
 # 3. Load the raw spreadsheet
 @st.cache_data 
@@ -15,16 +34,6 @@ def load_data():
     return pd.read_csv('defenders_data(Sheet1).csv')
 
 raw_df = load_data()
-
-# 4. Build the Sidebar Controls
-st.sidebar.header("⚙️ Match State Settings")
-
-# NEW: Add the position selector
-selected_position = st.sidebar.selectbox("Select Position", ['CB', 'FB'])
-
-match_minute = st.sidebar.slider("Match Minute", min_value=0, max_value=90, value=0)
-goal_difference = st.sidebar.number_input("Goal Difference", min_value=-5, max_value=5, value=0)
-st.sidebar.caption("Adjust these to see 'Fortress' and other conditional skills activate.")
 
 # 5. The Engine (Your exact math, FIXED)
 def calculate_catenaccio_scores(df, match_minute, goal_difference):
@@ -160,6 +169,31 @@ p2_values = [p2_data[cat] for cat in categories]
 categories.append(categories[0])
 p1_values.append(p1_values[0])
 p2_values.append(p2_values[0])
+
+
+# Create a summary row comparing key scores directly
+score_col1, score_col2, score_col3 = st.columns(3)
+
+with score_col1:
+    # Compares Overall Score
+    p1_over = p1_data['Overall_Score']
+    p2_over = p2_data['Overall_Score']
+    st.metric(label="Overall Matchup", value=f"{p1_over} vs {p2_over}", delta=f"{round(p1_over - p2_over, 2)} P1 Diff")
+
+with score_col2:
+    # Compares Shutdown Score
+    p1_shut = p1_data['Shutdown_Score']
+    p2_shut = p2_data['Shutdown_Score']
+    st.metric(label="Shutdown Capability", value=f"{p1_shut} vs {p2_shut}", delta=f"{round(p1_shut - p2_shut, 2)} P1 Diff")
+
+with score_col3:
+    # Compares Defending Score
+    p1_def = p1_data['Defending_Score']
+    p2_def = p2_data['Defending_Score']
+    st.metric(label="Pure Defending", value=f"{p1_def} vs {p2_def}", delta=f"{round(p1_def - p2_def, 2)} P1 Diff")
+
+st.markdown("### Visual Stat Web")
+
 
 # Draw the Plotly Radar Chart
 fig = go.Figure()
