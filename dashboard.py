@@ -227,3 +227,54 @@ fig.update_layout(
 
 # Render the chart on the Streamlit dashboard
 st.plotly_chart(fig, use_container_width=True)
+
+# ==========================================
+# 9. THE COMPATIBILITY CALCULATOR
+# ==========================================
+st.markdown("---")
+st.subheader("🤝 Tactical Compatibility")
+
+def calculate_compatibility(p1, p2):
+    # --- 1. PLAYSTYLE SYNERGY ---
+    models = [p1['Model'], p2['Model']]
+    if 'Build Up' in models and 'Destroyer' in models:
+        playstyle_score = 100
+    elif models == ['Build Up', 'Build Up']:
+        playstyle_score = 85
+    elif models == ['Destroyer', 'Destroyer']:
+        playstyle_score = 70
+    else:
+        playstyle_score = 80 # Fallback score just in case 
+        
+    # --- 2. AERIAL BALANCE ---
+    # Give them an aerial rating based 60% on height, 40% on jumping
+    p1_aerial = (p1['Nomalized_Height'] * 0.6) + (p1['Jumping'] * 0.4)
+    p2_aerial = (p2['Nomalized_Height'] * 0.6) + (p2['Jumping'] * 0.4)
+    
+    # The pairing is saved as long as ONE of them is a giant
+    best_aerial = max(p1_aerial, p2_aerial)
+    
+    if best_aerial >= 92:
+        aerial_score = 100
+    elif best_aerial >= 88:
+        aerial_score = 85
+    else:
+        aerial_score = 70
+        
+    # --- FINAL MATH ---
+    # We weigh it: 60% Playstyle, 40% Aerial
+    total = (playstyle_score * 0.60) + (aerial_score * 0.40)
+    return round(total, 1)
+
+# Run the engine for the two selected players
+compat_score = calculate_compatibility(p1_data, p2_data)
+
+# Display the result in a massive UI card
+st.metric(label="Duo Compatibility Rating", value=f"{compat_score}%")
+
+if compat_score >= 90:
+    st.success("Elite Pairing. These two cover each other perfectly.")
+elif compat_score >= 80:
+    st.warning("Good Pairing. Stable, but has a minor tactical weakness.")
+else:
+    st.error("Poor Pairing. These two will expose gaps in your defense.")
